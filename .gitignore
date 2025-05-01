@@ -1,2 +1,5 @@
 /venv
 /src/__pycache__
+/data/metadata
+/data/raw
+/data/tokens

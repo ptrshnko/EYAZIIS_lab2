@@ -5,6 +5,15 @@ from PyPDF2 import PdfReader
 from docx import Document as DocxDocument
 from striprtf.striprtf import rtf_to_text
 
+# Try to import win32com for Windows (requires Microsoft Word)
+try:
+    import win32com.client
+    import pythoncom
+    has_win32com = True
+except ImportError:
+    has_win32com = False
+    logging.warning("win32com not installed. DOC file support requires Microsoft Word on Windows.")
+
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -26,6 +35,21 @@ def init_directories():
             json.dump({}, f)
     logger.info("Directories initialized")
 
+def convert_doc_with_win32com(filepath):
+    """Convert DOC file to text using win32com (Windows only, requires Microsoft Word)"""
+    try:
+        pythoncom.CoInitialize()  # Initialize COM
+        word = win32com.client.Dispatch('Word.Application')
+        doc = word.Documents.Open(filepath)
+        text = doc.Content.Text
+        doc.Close()
+        word.Quit()
+        pythoncom.CoUninitialize()
+        return text
+    except Exception as e:
+        logger.error(f"Error converting DOC with win32com: {e}")
+        return ''
+
 def convert_file(filepath):
     """Convert file to text"""
     try:
@@ -46,7 +70,15 @@ def convert_file(filepath):
             with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
                 return rtf_to_text(f.read())
         elif ext == 'doc':
-            logger.warning("DOC format requires external tools (e.g., antiword). Skipping.")
+            # Use win32com if on Windows and Microsoft Word is available
+            if has_win32com and os.name == 'nt':
+                text = convert_doc_with_win32com(filepath)
+                if text:
+                    return text
+                else:
+                    logger.warning("win32com conversion failed. Skipping DOC file.")
+            else:
+                logger.warning("DOC format unsupported without win32com and Microsoft Word on Windows. Skipping.")
             return ''
         else:
             logger.warning(f"Unsupported file format: {filepath}")
@@ -55,15 +87,10 @@ def convert_file(filepath):
         logger.error(f"Error converting file {filepath}: {e}")
         return ''
 
-def import_corpus():
+def import_corpus(new_files=None):
     """Import corpus files into the file system"""
     try:
         init_directories()
-        
-        # Check if raw directory is empty
-        if not os.listdir(RAW_DIR):
-            logger.error("No files found in data/raw. Please add text files to process.")
-            raise ValueError("No files found in data/raw")
         
         # Load existing metadata
         with open(METADATA_PATH, 'r', encoding='utf-8') as f:
@@ -71,7 +98,19 @@ def import_corpus():
         
         doc_id = max([int(k) for k in metadata.keys()] + [0]) + 1
         
-        for fname in os.listdir(RAW_DIR):
+        # Process only new files if provided (from GUI), otherwise process all files in RAW_DIR
+        files_to_process = []
+        if new_files:
+            files_to_process.extend(new_files)
+        else:
+            existing_files = {meta['filename'] for meta in metadata.values()}
+            files_to_process.extend((f, None, None) for f in os.listdir(RAW_DIR) if f not in existing_files)
+        
+        if not files_to_process and not new_files:
+            logger.error("No files found in data/raw. Please add text files to process.")
+            raise ValueError("No files found in data/raw")
+        
+        for fname, source, author in files_to_process:
             path_raw = os.path.join(RAW_DIR, fname)
             if not os.path.isfile(path_raw):
                 continue
@@ -94,13 +133,15 @@ def import_corpus():
                 logger.error(f"Error saving text {path_txt}: {e}")
                 continue
                 
-            # Update metadata
+            # Update metadata with source, author, and query (using title as query/tag)
             metadata[str(doc_id)] = {
                 'filename': fname,
                 'path_raw': path_raw,
                 'path_txt': path_txt,
-                'title': text.splitlines()[0][:200],
-                'date': ''  # Optional date field
+                'title': text.splitlines()[0][:200],  # Used as query/tag
+                'date': '',  # Optional date field
+                'source': source if source else 'Unknown',
+                'author': author if author else 'Unknown'
             }
             logger.info(f"Added metadata for document {doc_id}: {fname}")
             doc_id += 1

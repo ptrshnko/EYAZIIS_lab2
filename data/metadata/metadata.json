@@ -4,34 +4,44 @@
     "path_raw": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\raw\\auto_article1.txt",
     "path_txt": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\cleaned\\auto_article1.txt",
     "title": "Автомобильный транспорт занимает центральное место в современной жизни, обеспечивая мобильность людей и грузов на короткие и средние расстояния. Он является ключевым элементом экономики и повседневной",
-    "date": ""
+    "date": "",
+    "source": "Unknown",
+    "author": "Unknown"
   },
   "2": {
-    "filename": "aviation_overview.docx",
-    "path_raw": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\raw\\aviation_overview.docx",
-    "path_txt": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\cleaned\\aviation_overview.txt",
-    "title": "Авиационный транспорт — самый быстрый способ перемещения на дальние расстояния, связывающий страны и континенты. Он незаменим для международных путешествий, туризма и срочных грузовых перевозок.",
-    "date": ""
-  },
-  "3": {
     "filename": "bus_routes.txt",
     "path_raw": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\raw\\bus_routes.txt",
     "path_txt": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\cleaned\\bus_routes.txt",
     "title": "Общественный транспорт — основа городской мобильности, включающая автобусы, метро, трамваи и пригородные поезда. Он снижает нагрузку на дороги и обеспечивает доступность передвижения.",
-    "date": ""
+    "date": "",
+    "source": "Unknown",
+    "author": "Unknown"
   },
-  "4": {
+  "3": {
     "filename": "marine_report.rtf",
     "path_raw": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\raw\\marine_report.rtf",
     "path_txt": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\cleaned\\marine_report.txt",
     "title": "Морской транспорт — основа мировой торговли, перевозящая более 80% всех грузов по объёму. От танкеров до круизных лайнеров, он соединяет континенты и обеспечивает глобальную экономику.",
-    "date": ""
+    "date": "",
+    "source": "Unknown",
+    "author": "Unknown"
   },
-  "5": {
+  "4": {
     "filename": "train_news1.pdf",
     "path_raw": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\raw\\train_news1.pdf",
     "path_txt": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\cleaned\\train_news1.txt",
     "title": "Железнодорожный транспорт Ð один из самых надёжных и экономичных способов перевозки ",
-    "date": ""
+    "date": "",
+    "source": "Unknown",
+    "author": "Unknown"
+  },
+  "5": {
+    "filename": "aviation_overview.docx",
+    "path_raw": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\raw\\aviation_overview.docx",
+    "path_txt": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\cleaned\\aviation_overview.txt",
+    "title": "Авиационный транспорт — самый быстрый способ перемещения на дальние расстояния, связывающий страны и континенты. Он незаменим для международных путешествий, туризма и срочных грузовых перевозок.",
+    "date": "",
+    "source": "АвиацияАвиация",
+    "author": "Антон Антон"
   }
 }

@@ -31,10 +31,13 @@ class CorpusManager:
             raise
 
     def load_tokens(self, doc_ids=None):
-        """Load tokens from JSON files"""
+        """Load tokens from JSON files, avoiding duplicates"""
         tokens = []
+        processed_doc_ids = set()
         doc_ids = [int(did) for did in self.metadata.keys()] if doc_ids is None else doc_ids
         for doc_id in doc_ids:
+            if doc_id in processed_doc_ids:
+                continue  # Skip if already processed
             token_path = os.path.join(TOKENS_DIR, f'doc_{doc_id}.json')
             if os.path.exists(token_path):
                 try:
@@ -42,6 +45,7 @@ class CorpusManager:
                         doc_tokens = json.load(f)
                         tokens.extend(doc_tokens)
                     logger.debug(f"Loaded tokens for doc {doc_id}: {len(doc_tokens)} tokens")
+                    processed_doc_ids.add(doc_id)
                 except Exception as e:
                     logger.error(f"Error loading tokens for doc {doc_id}: {e}")
             else:
@@ -55,7 +59,7 @@ class CorpusManager:
         Count frequencies for tokens, lemmas, or POS.
         :param query: search string (token or lemma)
         :param by: 'token', 'lemma', or 'pos'
-        :param filters: dict with keys 'pos', 'date_from', 'date_to', 'doc_ids'
+        :param filters: dict with keys 'pos', 'date_from', 'date_to', 'doc_ids', 'source', 'author'
         :return: Counter
         """
         try:
@@ -70,7 +74,7 @@ class CorpusManager:
                 if token[by].lower() != query.lower():
                     continue
                 if filters:
-                    if 'pos' in filters and token['pos'] != filters['pos']:
+                    if 'pos' in filters and token['pos'].lower() != filters['pos'].lower():
                         continue
                     if 'date_from' in filters:
                         doc_date = self.metadata[str(token['doc_id'])]['date']
@@ -80,6 +84,10 @@ class CorpusManager:
                         doc_date = self.metadata[str(token['doc_id'])]['date']
                         if doc_date and doc_date > filters['date_to']:
                             continue
+                    if 'source' in filters and self.metadata[str(token['doc_id'])]['source'].lower().strip() != filters['source'].lower().strip():
+                        continue
+                    if 'author' in filters and self.metadata[str(token['doc_id'])]['author'].lower().strip() != filters['author'].lower().strip():
+                        continue
                 counter[token[by]] += 1
             
             logger.info(f"Frequency analysis completed: {counter}")
@@ -105,7 +113,7 @@ class CorpusManager:
             counter = Counter()
             for token in tokens:
                 if filters:
-                    if 'pos' in filters and token['pos'] != filters['pos']:
+                    if 'pos' in filters and token['pos'].lower() != filters['pos'].lower():
                         continue
                     if 'date_from' in filters:
                         doc_date = self.metadata[str(token['doc_id'])]['date']
@@ -115,6 +123,10 @@ class CorpusManager:
                         doc_date = self.metadata[str(token['doc_id'])]['date']
                         if doc_date and doc_date > filters['date_to']:
                             continue
+                    if 'source' in filters and self.metadata[str(token['doc_id'])]['source'].lower().strip() != filters['source'].lower().strip():
+                        continue
+                    if 'author' in filters and self.metadata[str(token['doc_id'])]['author'].lower().strip() != filters['author'].lower().strip():
+                        continue
                 counter[token[by]] += 1
             
             logger.info(f"Global frequency analysis completed: {len(counter)} unique elements")
@@ -143,7 +155,7 @@ class CorpusManager:
                 if token['token'].lower() != query.lower() and token['lemma'].lower() != query.lower():
                     continue
                 if filters:
-                    if 'pos' in filters and token['pos'] != filters['pos']:
+                    if 'pos' in filters and token['pos'].lower() != filters['pos'].lower():
                         continue
                     if 'date_from' in filters:
                         doc_date = self.metadata[str(token['doc_id'])]['date']
@@ -153,6 +165,10 @@ class CorpusManager:
                         doc_date = self.metadata[str(token['doc_id'])]['date']
                         if doc_date and doc_date > filters['date_to']:
                             continue
+                    if 'source' in filters and self.metadata[str(token['doc_id'])]['source'].lower().strip() != filters['source'].lower().strip():
+                        continue
+                    if 'author' in filters and self.metadata[str(token['doc_id'])]['author'].lower().strip() != filters['author'].lower().strip():
+                        continue
                 
                 # Get sentence tokens
                 sent_tokens = [t for t in tokens if t['doc_id'] == token['doc_id'] and t['sent_id'] == token['sent_id']]
