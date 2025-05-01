@@ -1,0 +1,7 @@
+natasha
+pymorphy2
+tika
+PyPDF2
+python-docx
+PyQt5
+pytest
