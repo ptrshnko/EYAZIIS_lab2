@@ -1,27 +1,34 @@
 import sys
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit,
-    QPushButton, QHBoxLayout, QComboBox, QSpinBox, QDateEdit,
+    QPushButton, QHBoxLayout, QComboBox, QDateEdit,
     QTableWidget, QTableWidgetItem, QTextEdit, QFileDialog,
-    QCheckBox, QGridLayout
+    QCheckBox, QGridLayout, QMessageBox
 )
 from PyQt5.QtCore import QDate
 from corpus_manager import CorpusManager
+import logging
 
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 class CorpusGUI(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Корпусный менеджер — Транспорт")
+        self.setWindowTitle("Корпусный менеджер — Кинематограф")
         self.setMinimumSize(900, 700)
-
-        self.manager = CorpusManager()
+        try:
+            self.manager = CorpusManager()
+        except Exception as e:
+            QMessageBox.critical(self, "Ошибка", f"Не удалось инициализировать корпус: {str(e)}")
+            sys.exit(1)
         self.init_ui()
 
     def init_ui(self):
         layout = QVBoxLayout()
 
-        # Параметры фильтрации
+        # Filter parameters
         filter_layout = QGridLayout()
         filter_layout.addWidget(QLabel("Токен/лемма:"), 0, 0)
         self.query_input = QLineEdit()
@@ -54,7 +61,7 @@ class CorpusGUI(QWidget):
 
         layout.addLayout(filter_layout)
 
-        # Кнопки
+        # Buttons
         btn_layout = QHBoxLayout()
         self.search_btn = QPushButton("Частотный анализ")
         self.search_btn.clicked.connect(self.run_frequency)
@@ -67,7 +74,7 @@ class CorpusGUI(QWidget):
         btn_layout.addWidget(self.export_btn)
         layout.addLayout(btn_layout)
 
-        # Результаты
+        # Results
         layout.addWidget(QLabel("Результаты частотного анализа:"))
         self.results_area = QTableWidget()
         self.results_area.setColumnCount(2)
@@ -79,7 +86,7 @@ class CorpusGUI(QWidget):
         self.concord_area.setReadOnly(True)
         layout.addWidget(self.concord_area)
 
-        # Справка
+        # Help
         self.help_area = QTextEdit()
         self.help_area.setReadOnly(True)
         self.help_area.setHtml(
@@ -89,6 +96,7 @@ class CorpusGUI(QWidget):
             "<li>При необходимости отметьте фильтрацию по POS или дате и задайте параметры.</li>"
             "<li>Нажмите 'Частотный анализ' для отображения частот или 'Показать конкордансы' для контекстов.</li>"
             "<li>Для экспорта результатов частот нажмите 'Экспорт в CSV'.</li>"
+            "<li>Убедитесь, что в папке data/raw есть текстовые файлы.</li>"
             "</ul>"
         )
         layout.addWidget(QLabel("Справка:"))
@@ -99,41 +107,67 @@ class CorpusGUI(QWidget):
     def get_filters(self):
         f = {}
         if self.include_pos.isChecked():
-            f['pos'] = self.pos_filter.text().strip()
+            pos = self.pos_filter.text().strip()
+            if pos:
+                f['pos'] = pos
         if self.include_date.isChecked():
             f['date_from'] = self.date_from.date().toString('yyyy-MM-dd')
             f['date_to'] = self.date_to.date().toString('yyyy-MM-dd')
+        logger.debug(f"Filters applied: {f}")
         return f or None
 
     def run_frequency(self):
+        logger.info("Frequency analysis button clicked")
         self.results_area.clearContents()
         self.results_area.setRowCount(0)
 
         query = self.query_input.text().strip()
         by = self.by_combo.currentText()
         filters = self.get_filters()
+
         if not query:
+            QMessageBox.warning(self, "Предупреждение", "Введите токен или лемму для поиска.")
             return
 
-        result = self.manager.get_frequency(query=query, by=by, filters=filters)
-        self.results_area.setRowCount(len(result))
-        for row, (elem, freq) in enumerate(result.items()):
-            self.results_area.setItem(row, 0, QTableWidgetItem(elem))
-            self.results_area.setItem(row, 1, QTableWidgetItem(str(freq)))
+        try:
+            result = self.manager.get_frequency(query=query, by=by, filters=filters)
+            if not result:
+                QMessageBox.warning(self, "Нет результатов", f"Не найдено совпадений для '{query}' (тип: {by}).")
+                return
+            self.results_area.setRowCount(len(result))
+            for row, (elem, freq) in enumerate(result.items()):
+                self.results_area.setItem(row, 0, QTableWidgetItem(elem))
+                self.results_area.setItem(row, 1, QTableWidgetItem(str(freq)))
+            logger.info(f"Displayed {len(result)} frequency results")
+        except Exception as e:
+            logger.error(f"Error in frequency analysis: {e}")
+            QMessageBox.critical(self, "Ошибка", f"Ошибка при выполнении частотного анализа: {str(e)}")
 
     def run_concordance(self):
+        logger.info("Concordance button clicked")
         self.concord_area.clear()
         query = self.query_input.text().strip()
         filters = self.get_filters()
+
         if not query:
+            QMessageBox.warning(self, "Предупреждение", "Введите токен или лемму для поиска.")
             return
 
-        concordances = self.manager.get_concordance(query=query, window=5, filters=filters)
-        for left, match, right, doc_id, sent_id in concordances:
-            line = f"... {' '.join(left)} >> {match} << {' '.join(right)} ... (doc {doc_id}, sent {sent_id})"
-            self.concord_area.append(line)
+        try:
+            concordances = self.manager.get_concordance(query=query, window=5, filters=filters)
+            if not concordances:
+                QMessageBox.warning(self, "Нет результатов", f"Не найдено конкордансов для '{query}'.")
+                return
+            for left, match, right, doc_id, sent_id in concordances:
+                line = f"... {' '.join(left)} >> {match} << {' '.join(right)} ... (doc {doc_id}, sent {sent_id})"
+                self.concord_area.append(line)
+            logger.info(f"Displayed {len(concordances)} concordances")
+        except Exception as e:
+            logger.error(f"Error in concordance analysis: {e}")
+            QMessageBox.critical(self, "Ошибка", f"Ошибка при получении конкордансов: {str(e)}")
 
     def export_csv(self):
+        logger.info("Export CSV button clicked")
         path, _ = QFileDialog.getSaveFileName(self, "Сохранить CSV", "", "CSV Files (*.csv)")
         if not path:
             return
@@ -142,13 +176,14 @@ class CorpusGUI(QWidget):
             elem = self.results_area.item(row, 0).text()
             freq = self.results_area.item(row, 1).text()
             rows.append(f"{elem},{freq}\n")
-        with open(path, 'w', encoding='utf-8') as f:
-            f.writelines(rows)
-
-    def closeEvent(self, event):
-        self.manager.close()
-        super().closeEvent(event)
-
+        try:
+            with open(path, 'w', encoding='utf-8') as f:
+                f.writelines(rows)
+            logger.info(f"Exported results to {path}")
+            QMessageBox.information(self, "Успех", "Результаты успешно экспортированы в CSV.")
+        except Exception as e:
+            logger.error(f"Error exporting CSV: {e}")
+            QMessageBox.critical(self, "Ошибка", f"Ошибка при экспорте CSV: {str(e)}")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

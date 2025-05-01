@@ -1,164 +1,173 @@
 import os
-import sqlite3
+import json
 import logging
 from collections import Counter
 
-# Настройка логирования
+# Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Пути
+# Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(BASE_DIR, 'db', 'corpus.db')
+TOKENS_DIR = os.path.join(BASE_DIR, 'data', 'tokens')
+METADATA_PATH = os.path.join(BASE_DIR, 'data', 'metadata', 'metadata.json')
 
 class CorpusManager:
-    def __init__(self, db_path=DB_PATH):
-        """Инициализация менеджера корпуса"""
+    def __init__(self):
+        """Initialize corpus manager"""
+        self.metadata = {}
         try:
-            self.conn = sqlite3.connect(db_path)
-            self.conn.row_factory = sqlite3.Row
-            self.cursor = self.conn.cursor()
-            logger.info("Подключение к базе данных установлено")
-        except sqlite3.Error as e:
-            logger.error(f"Ошибка при подключении к базе данных: {e}")
+            if not os.path.exists(METADATA_PATH):
+                logger.error("Metadata file not found. Run corpus_loader first.")
+                raise FileNotFoundError("Metadata file not found")
+            with open(METADATA_PATH, 'r', encoding='utf-8') as f:
+                self.metadata = json.load(f)
+            if not self.metadata:
+                logger.error("Metadata is empty. No documents available.")
+                raise ValueError("Metadata is empty")
+            logger.info(f"Corpus manager initialized with {len(self.metadata)} documents")
+        except Exception as e:
+            logger.error(f"Error initializing corpus manager: {e}")
             raise
+
+    def load_tokens(self, doc_ids=None):
+        """Load tokens from JSON files"""
+        tokens = []
+        doc_ids = [int(did) for did in self.metadata.keys()] if doc_ids is None else doc_ids
+        for doc_id in doc_ids:
+            token_path = os.path.join(TOKENS_DIR, f'doc_{doc_id}.json')
+            if os.path.exists(token_path):
+                try:
+                    with open(token_path, 'r', encoding='utf-8') as f:
+                        doc_tokens = json.load(f)
+                        tokens.extend(doc_tokens)
+                    logger.debug(f"Loaded tokens for doc {doc_id}: {len(doc_tokens)} tokens")
+                except Exception as e:
+                    logger.error(f"Error loading tokens for doc {doc_id}: {e}")
+            else:
+                logger.warning(f"Token file not found for doc {doc_id}: {token_path}")
+        if not tokens:
+            logger.warning("No tokens loaded. Check token files in data/tokens.")
+        return tokens
 
     def get_frequency(self, query, by='token', filters=None):
         """
-        Подсчет частот по токенам, леммам или POS.
-        :param query: строка поиска (токен или лемма)
-        :param by: 'token', 'lemma' или 'pos'
-        :param filters: dict с ключами 'pos', 'date_from', 'date_to', 'doc_ids'
+        Count frequencies for tokens, lemmas, or POS.
+        :param query: search string (token or lemma)
+        :param by: 'token', 'lemma', or 'pos'
+        :param filters: dict with keys 'pos', 'date_from', 'date_to', 'doc_ids'
         :return: Counter
         """
         try:
-            field = by
-            sql = f"SELECT {field} FROM tokens t JOIN documents d ON t.doc_id = d.doc_id WHERE {field} = ?"
-            params = [query]
-            if filters:
-                if 'pos' in filters:
-                    sql += " AND t.pos = ?"
-                    params.append(filters['pos'])
-                if 'date_from' in filters:
-                    sql += " AND d.date >= ?"
-                    params.append(filters['date_from'])
-                if 'date_to' in filters:
-                    sql += " AND d.date <= ?"
-                    params.append(filters['date_to'])
-                if 'doc_ids' in filters:
-                    placeholders = ','.join('?' for _ in filters['doc_ids'])
-                    sql += f" AND t.doc_id IN ({placeholders})"
-                    params.extend(filters['doc_ids'])
-            self.cursor.execute(sql, params)
-            rows = self.cursor.fetchall()
-            return Counter([row[field] for row in rows])
-        except sqlite3.Error as e:
-            logger.error(f"Ошибка при подсчете частот: {e}")
+            logger.info(f"Running frequency analysis for query='{query}', by='{by}', filters={filters}")
+            tokens = self.load_tokens(filters.get('doc_ids') if filters else None)
+            if not tokens:
+                logger.error("No tokens available for frequency analysis")
+                return Counter()
+            
+            counter = Counter()
+            for token in tokens:
+                if token[by].lower() != query.lower():
+                    continue
+                if filters:
+                    if 'pos' in filters and token['pos'] != filters['pos']:
+                        continue
+                    if 'date_from' in filters:
+                        doc_date = self.metadata[str(token['doc_id'])]['date']
+                        if doc_date and doc_date < filters['date_from']:
+                            continue
+                    if 'date_to' in filters:
+                        doc_date = self.metadata[str(token['doc_id'])]['date']
+                        if doc_date and doc_date > filters['date_to']:
+                            continue
+                counter[token[by]] += 1
+            
+            logger.info(f"Frequency analysis completed: {counter}")
+            return counter
+        except Exception as e:
+            logger.error(f"Error calculating frequency: {e}")
             return Counter()
 
     def get_global_frequency(self, by='token', filters=None):
         """
-        Подсчет общей частоты всех элементов указанного типа.
-        :param by: 'token', 'lemma' или 'pos'
-        :param filters: аналогично get_frequency
+        Count global frequency of all elements of the specified type.
+        :param by: 'token', 'lemma', or 'pos'
+        :param filters: same as get_frequency
         :return: Counter
         """
         try:
-            field = by
-            sql = f"SELECT {field} FROM tokens t JOIN documents d ON t.doc_id = d.doc_id"
-            params = []
-            if filters:
-                where_clauses, where_params = [], []
-                if 'pos' in filters:
-                    where_clauses.append("t.pos = ?")
-                    where_params.append(filters['pos'])
-                if 'date_from' in filters:
-                    where_clauses.append("d.date >= ?")
-                    where_params.append(filters['date_from'])
-                if 'date_to' in filters:
-                    where_clauses.append("d.date <= ?")
-                    where_params.append(filters['date_to'])
-                if 'doc_ids' in filters:
-                    placeholders = ','.join('?' for _ in filters['doc_ids'])
-                    where_clauses.append(f"t.doc_id IN ({placeholders})")
-                    where_params.extend(filters['doc_ids'])
-                if where_clauses:
-                    sql += " WHERE " + " AND ".join(where_clauses)
-                    params = where_params
-            self.cursor.execute(sql, params)
-            rows = self.cursor.fetchall()
-            return Counter([row[field] for row in rows])
-        except sqlite3.Error as e:
-            logger.error(f"Ошибка при подсчете глобальной частоты: {e}")
+            logger.info(f"Running global frequency analysis by='{by}', filters={filters}")
+            tokens = self.load_tokens(filters.get('doc_ids') if filters else None)
+            if not tokens:
+                logger.error("No tokens available for global frequency analysis")
+                return Counter()
+            
+            counter = Counter()
+            for token in tokens:
+                if filters:
+                    if 'pos' in filters and token['pos'] != filters['pos']:
+                        continue
+                    if 'date_from' in filters:
+                        doc_date = self.metadata[str(token['doc_id'])]['date']
+                        if doc_date and doc_date < filters['date_from']:
+                            continue
+                    if 'date_to' in filters:
+                        doc_date = self.metadata[str(token['doc_id'])]['date']
+                        if doc_date and doc_date > filters['date_to']:
+                            continue
+                counter[token[by]] += 1
+            
+            logger.info(f"Global frequency analysis completed: {len(counter)} unique elements")
+            return counter
+        except Exception as e:
+            logger.error(f"Error calculating global frequency: {e}")
             return Counter()
 
     def get_concordance(self, query, window=5, filters=None):
         """
-        KWIC: контексты вокруг query.
-        :param query: строка поиска (токен или лемма)
-        :param window: число токенов до и после
-        :param filters: dict как выше
+        KWIC: contexts around query.
+        :param query: search string (token or lemma)
+        :param window: number of tokens before and after
+        :param filters: dict as above
         :return: list of (left_context, match, right_context, doc_id, sent_id)
         """
         try:
-            # Получить все токены с контекстом
-            sql = ("SELECT t.doc_id, t.sent_id, t.token_id, t.token, t.lemma, t.pos "
-                   "FROM tokens t JOIN documents d ON t.doc_id = d.doc_id WHERE (t.token = ? OR t.lemma = ?)")
-            params = [query, query]
-            if filters:
-                if 'pos' in filters:
-                    sql += " AND t.pos = ?"
-                    params.append(filters['pos'])
-                if 'date_from' in filters:
-                    sql += " AND d.date >= ?"
-                    params.append(filters['date_from'])
-                if 'date_to' in filters:
-                    sql += " AND d.date <= ?"
-                    params.append(filters['date_to'])
-            self.cursor.execute(sql, params)
-            matches = self.cursor.fetchall()
-
+            logger.info(f"Running concordance for query='{query}', window={window}, filters={filters}")
+            tokens = self.load_tokens(filters.get('doc_ids') if filters else None)
+            if not tokens:
+                logger.error("No tokens available for concordance")
+                return []
+            
             concordances = []
-            for m in matches:
-                doc_id, sent_id, token_id = m['doc_id'], m['sent_id'], m['token_id']
-                try:
-                    # получить контекст токенов в пределах предложения
-                    self.cursor.execute(
-                        "SELECT token FROM tokens WHERE doc_id = ? AND sent_id = ? ORDER BY token_id", 
-                        (doc_id, sent_id)
-                    )
-                    sentence = [r['token'] for r in self.cursor.fetchall()]
-                    # найти позицию токена
-                    self.cursor.execute(
-                        "SELECT token_id, token FROM tokens WHERE doc_id = ? AND sent_id = ? ORDER BY token_id", 
-                        (doc_id, sent_id)
-                    )
-                    full = self.cursor.fetchall()
-                    ids = [r['token_id'] for r in full]
-                    idx = ids.index(token_id)
-                    left = [r['token'] for r in full[max(0, idx-window):idx]]
-                    right = [r['token'] for r in full[idx+1:idx+1+window]]
-                    concordances.append((left, full[idx]['token'], right, doc_id, sent_id))
-                except sqlite3.Error as e:
-                    logger.error(f"Ошибка при получении контекста для токена {token_id}: {e}")
+            for token in tokens:
+                if token['token'].lower() != query.lower() and token['lemma'].lower() != query.lower():
                     continue
-
+                if filters:
+                    if 'pos' in filters and token['pos'] != filters['pos']:
+                        continue
+                    if 'date_from' in filters:
+                        doc_date = self.metadata[str(token['doc_id'])]['date']
+                        if doc_date and doc_date < filters['date_from']:
+                            continue
+                    if 'date_to' in filters:
+                        doc_date = self.metadata[str(token['doc_id'])]['date']
+                        if doc_date and doc_date > filters['date_to']:
+                            continue
+                
+                # Get sentence tokens
+                sent_tokens = [t for t in tokens if t['doc_id'] == token['doc_id'] and t['sent_id'] == token['sent_id']]
+                sent_tokens.sort(key=lambda x: x['token_id'])
+                
+                # Find token index
+                idx = next(i for i, t in enumerate(sent_tokens) if t['token_id'] == token['token_id'])
+                
+                # Extract context
+                left = [t['token'] for t in sent_tokens[max(0, idx-window):idx]]
+                right = [t['token'] for t in sent_tokens[idx+1:idx+1+window]]
+                concordances.append((left, token['token'], right, token['doc_id'], token['sent_id']))
+            
+            logger.info(f"Concordance completed: {len(concordances)} matches found")
             return concordances
-        except sqlite3.Error as e:
-            logger.error(f"Ошибка при получении конкордансов: {e}")
+        except Exception as e:
+            logger.error(f"Error generating concordances: {e}")
             return []
-
-    def close(self):
-        """Закрытие соединения с базой данных"""
-        try:
-            self.conn.close()
-            logger.info("Соединение с базой данных закрыто")
-        except sqlite3.Error as e:
-            logger.error(f"Ошибка при закрытии соединения: {e}")
-
-
-if __name__ == '__main__':
-    cm = CorpusManager()
-    print(cm.get_global_frequency(by='lemma').most_common(10))
-    print(cm.get_concordance('автомобиль', window=3)[:5])
-    cm.close()

@@ -1,47 +1,33 @@
-# src/corpus_loader.py
-
 import os
-import sqlite3
+import json
 import logging
 from PyPDF2 import PdfReader
 from docx import Document as DocxDocument
 from striprtf.striprtf import rtf_to_text
 
-# Настройка логирования
+# Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Пути
+# Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW_DIR = os.path.join(BASE_DIR, 'data', 'raw')
 CLEANED_DIR = os.path.join(BASE_DIR, 'data', 'cleaned')
-DB_PATH = os.path.join(BASE_DIR, 'db', 'corpus.db')
+METADATA_DIR = os.path.join(BASE_DIR, 'data', 'metadata')
+METADATA_PATH = os.path.join(METADATA_DIR, 'metadata.json')
 
-def init_db():
-    """Инициализация базы данных"""
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS documents (
-            doc_id     INTEGER PRIMARY KEY,
-            filename   TEXT,
-            path_raw   TEXT,
-            path_txt   TEXT,
-            title      TEXT,
-            source     TEXT,
-            date       DATE
-        )
-        ''')
-        conn.commit()
-        conn.close()
-        logger.info("База данных успешно инициализирована")
-    except sqlite3.Error as e:
-        logger.error(f"Ошибка при инициализации базы данных: {e}")
-        raise
+def init_directories():
+    """Initialize required directories"""
+    os.makedirs(RAW_DIR, exist_ok=True)
+    os.makedirs(CLEANED_DIR, exist_ok=True)
+    os.makedirs(METADATA_DIR, exist_ok=True)
+    if not os.path.exists(METADATA_PATH):
+        with open(METADATA_PATH, 'w', encoding='utf-8') as f:
+            json.dump({}, f)
+    logger.info("Directories initialized")
 
 def convert_file(filepath):
-    """Конвертация файла в текст"""
+    """Convert file to text"""
     try:
         ext = filepath.lower().rsplit('.', 1)[-1]
         if ext == 'txt':
@@ -59,24 +45,32 @@ def convert_file(filepath):
         elif ext == 'rtf':
             with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
                 return rtf_to_text(f.read())
+        elif ext == 'doc':
+            logger.warning("DOC format requires external tools (e.g., antiword). Skipping.")
+            return ''
         else:
-            logger.warning(f"Неподдерживаемый формат файла: {filepath}")
+            logger.warning(f"Unsupported file format: {filepath}")
             return ''
     except Exception as e:
-        logger.error(f"Ошибка при конвертации файла {filepath}: {e}")
+        logger.error(f"Error converting file {filepath}: {e}")
         return ''
 
 def import_corpus():
-    """Импорт корпуса в базу данных"""
+    """Import corpus files into the file system"""
     try:
-        # Проверяем существование директорий
-        os.makedirs(RAW_DIR, exist_ok=True)
-        os.makedirs(CLEANED_DIR, exist_ok=True)
+        init_directories()
         
-        init_db()
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-
+        # Check if raw directory is empty
+        if not os.listdir(RAW_DIR):
+            logger.error("No files found in data/raw. Please add text files to process.")
+            raise ValueError("No files found in data/raw")
+        
+        # Load existing metadata
+        with open(METADATA_PATH, 'r', encoding='utf-8') as f:
+            metadata = json.load(f)
+        
+        doc_id = max([int(k) for k in metadata.keys()] + [0]) + 1
+        
         for fname in os.listdir(RAW_DIR):
             path_raw = os.path.join(RAW_DIR, fname)
             if not os.path.isfile(path_raw):
@@ -84,10 +78,10 @@ def import_corpus():
                 
             text = convert_file(path_raw)
             if not text.strip():
-                logger.warning(f"Пустой текст в файле: {fname}")
+                logger.warning(f"Empty text in file: {fname}")
                 continue
                 
-            # Сохраняем текст
+            # Save cleaned text
             base, _ = os.path.splitext(fname)
             txt_name = base + '.txt'
             path_txt = os.path.join(CLEANED_DIR, txt_name)
@@ -95,25 +89,29 @@ def import_corpus():
             try:
                 with open(path_txt, 'w', encoding='utf-8') as f:
                     f.write(text)
+                logger.info(f"Saved cleaned text: {path_txt}")
             except Exception as e:
-                logger.error(f"Ошибка при сохранении текста {path_txt}: {e}")
+                logger.error(f"Error saving text {path_txt}: {e}")
                 continue
                 
-            # Запись в БД
-            try:
-                cursor.execute('''
-                    INSERT INTO documents (filename, path_raw, path_txt, title)
-                    VALUES (?, ?, ?, ?)
-                ''', (fname, path_raw, path_txt, text.splitlines()[0][:200]))
-            except sqlite3.Error as e:
-                logger.error(f"Ошибка при записи в БД для файла {fname}: {e}")
-                continue
-                
-        conn.commit()
-        conn.close()
-        logger.info("Импорт корпуса успешно завершен")
+            # Update metadata
+            metadata[str(doc_id)] = {
+                'filename': fname,
+                'path_raw': path_raw,
+                'path_txt': path_txt,
+                'title': text.splitlines()[0][:200],
+                'date': ''  # Optional date field
+            }
+            logger.info(f"Added metadata for document {doc_id}: {fname}")
+            doc_id += 1
+        
+        # Save metadata
+        with open(METADATA_PATH, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=2)
+        
+        logger.info("Corpus import completed successfully")
     except Exception as e:
-        logger.error(f"Критическая ошибка при импорте корпуса: {e}")
+        logger.error(f"Critical error during corpus import: {e}")
         raise
 
 if __name__ == '__main__':

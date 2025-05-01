@@ -1,0 +1,956 @@
+[
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 1,
+    "token": "Морской",
+    "lemma": "морской",
+    "pos": "ADJ",
+    "grammems": "Case=Nom,Degree=Pos,Gender=Masc,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 2,
+    "token": "транспорт",
+    "lemma": "транспорт",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Masc,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 3,
+    "token": "—",
+    "lemma": "—",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 4,
+    "token": "основа",
+    "lemma": "основа",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 5,
+    "token": "мировой",
+    "lemma": "мировой",
+    "pos": "ADJ",
+    "grammems": "Case=Gen,Degree=Pos,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 6,
+    "token": "торговли",
+    "lemma": "торговля",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Gen,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 7,
+    "token": ",",
+    "lemma": ",",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 8,
+    "token": "перевозящая",
+    "lemma": "перевозить",
+    "pos": "VERB",
+    "grammems": "Aspect=Imp,Tense=Pres,VerbForm=Conv,Voice=Act"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 9,
+    "token": "более",
+    "lemma": "более",
+    "pos": "ADV",
+    "grammems": "Degree=Cmp"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 10,
+    "token": "80",
+    "lemma": "80",
+    "pos": "NUM",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 11,
+    "token": "%",
+    "lemma": "%",
+    "pos": "SYM",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 12,
+    "token": "всех",
+    "lemma": "весь",
+    "pos": "DET",
+    "grammems": "Case=Gen,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 13,
+    "token": "грузов",
+    "lemma": "груз",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Gen,Gender=Masc,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 14,
+    "token": "по",
+    "lemma": "по",
+    "pos": "ADP",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 15,
+    "token": "объёму",
+    "lemma": "объем",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Dat,Gender=Masc,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 1,
+    "token_id": 16,
+    "token": ".",
+    "lemma": ".",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 17,
+    "token": "От",
+    "lemma": "от",
+    "pos": "ADP",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 18,
+    "token": "танкеров",
+    "lemma": "танкер",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Gen,Gender=Masc,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 19,
+    "token": "до",
+    "lemma": "до",
+    "pos": "ADP",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 20,
+    "token": "круизных",
+    "lemma": "круизный",
+    "pos": "ADJ",
+    "grammems": "Case=Gen,Degree=Pos,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 21,
+    "token": "лайнеров",
+    "lemma": "лайнер",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Gen,Gender=Masc,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 22,
+    "token": ",",
+    "lemma": ",",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 23,
+    "token": "он",
+    "lemma": "он",
+    "pos": "PRON",
+    "grammems": "Case=Nom,Gender=Masc,Number=Sing,Person=3"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 24,
+    "token": "соединяет",
+    "lemma": "соединять",
+    "pos": "VERB",
+    "grammems": "Aspect=Imp,Mood=Ind,Number=Sing,Person=3,Tense=Pres,VerbForm=Fin,Voice=Act"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 25,
+    "token": "континенты",
+    "lemma": "континент",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Acc,Gender=Masc,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 26,
+    "token": "и",
+    "lemma": "и",
+    "pos": "CCONJ",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 27,
+    "token": "обеспечивает",
+    "lemma": "обеспечивать",
+    "pos": "VERB",
+    "grammems": "Aspect=Imp,Mood=Ind,Number=Sing,Person=3,Tense=Pres,VerbForm=Fin,Voice=Act"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 28,
+    "token": "глобальную",
+    "lemma": "глобальный",
+    "pos": "ADJ",
+    "grammems": "Case=Acc,Degree=Pos,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 29,
+    "token": "экономику",
+    "lemma": "экономика",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Acc,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 2,
+    "token_id": 30,
+    "token": ".",
+    "lemma": ".",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 3,
+    "token_id": 31,
+    "token": "Морские",
+    "lemma": "морской",
+    "pos": "ADJ",
+    "grammems": "Case=Nom,Degree=Pos,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 3,
+    "token_id": 32,
+    "token": "перевозки",
+    "lemma": "перевозка",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Fem,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 3,
+    "token_id": 33,
+    "token": "начались",
+    "lemma": "начаться",
+    "pos": "VERB",
+    "grammems": "Aspect=Perf,Mood=Ind,Number=Plur,Tense=Past,VerbForm=Fin,Voice=Mid"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 3,
+    "token_id": 34,
+    "token": "тысячи",
+    "lemma": "тысяча",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Fem,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 3,
+    "token_id": 35,
+    "token": "лет",
+    "lemma": "год",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Gen,Gender=Masc,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 3,
+    "token_id": 36,
+    "token": "назад",
+    "lemma": "назад",
+    "pos": "ADV",
+    "grammems": "Degree=Pos"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 3,
+    "token_id": 37,
+    "token": "с",
+    "lemma": "с",
+    "pos": "ADP",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 3,
+    "token_id": 38,
+    "token": "парусных",
+    "lemma": "парусный",
+    "pos": "ADJ",
+    "grammems": "Case=Gen,Degree=Pos,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 3,
+    "token_id": 39,
+    "token": "судов",
+    "lemma": "судно",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Gen,Gender=Neut,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 3,
+    "token_id": 40,
+    "token": ".",
+    "lemma": ".",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 4,
+    "token_id": 41,
+    "token": "Сегодня",
+    "lemma": "сегодня",
+    "pos": "ADV",
+    "grammems": "Degree=Pos"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 4,
+    "token_id": 42,
+    "token": "гигантские",
+    "lemma": "гигантский",
+    "pos": "ADJ",
+    "grammems": "Case=Nom,Degree=Pos,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 4,
+    "token_id": 43,
+    "token": "контейнеровозы",
+    "lemma": "контейнеровоз",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Masc,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 4,
+    "token_id": 44,
+    "token": "и",
+    "lemma": "и",
+    "pos": "CCONJ",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 4,
+    "token_id": 45,
+    "token": "танкеры",
+    "lemma": "танкер",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Masc,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 4,
+    "token_id": 46,
+    "token": "доминируют",
+    "lemma": "доминировать",
+    "pos": "VERB",
+    "grammems": "Aspect=Imp,Mood=Ind,Number=Plur,Person=3,Tense=Pres,VerbForm=Fin,Voice=Act"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 4,
+    "token_id": 47,
+    "token": "на",
+    "lemma": "на",
+    "pos": "ADP",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 4,
+    "token_id": 48,
+    "token": "морских",
+    "lemma": "морской",
+    "pos": "ADJ",
+    "grammems": "Case=Loc,Degree=Pos,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 4,
+    "token_id": 49,
+    "token": "путях",
+    "lemma": "путь",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Loc,Gender=Masc,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 4,
+    "token_id": 50,
+    "token": ".",
+    "lemma": ".",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 51,
+    "token": "Преимущества",
+    "lemma": "преимущество",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Neut,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 52,
+    "token": "—",
+    "lemma": "—",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 53,
+    "token": "низкая",
+    "lemma": "низкий",
+    "pos": "ADJ",
+    "grammems": "Case=Nom,Degree=Pos,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 54,
+    "token": "стоимость",
+    "lemma": "стоимость",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 55,
+    "token": "перевозки",
+    "lemma": "перевозка",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Gen,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 56,
+    "token": "на",
+    "lemma": "на",
+    "pos": "ADP",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 57,
+    "token": "тонну",
+    "lemma": "тонна",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Acc,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 58,
+    "token": "груза",
+    "lemma": "груз",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Gen,Gender=Masc,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 59,
+    "token": "и",
+    "lemma": "и",
+    "pos": "CCONJ",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 60,
+    "token": "меньшее",
+    "lemma": "малый",
+    "pos": "ADJ",
+    "grammems": "Animacy=Inan,Case=Acc,Degree=Pos,Gender=Neut,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 61,
+    "token": "воздействие",
+    "lemma": "воздействие",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Acc,Gender=Neut,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 62,
+    "token": "на",
+    "lemma": "на",
+    "pos": "ADP",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 63,
+    "token": "экологию",
+    "lemma": "экология",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Acc,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 64,
+    "token": "по",
+    "lemma": "по",
+    "pos": "ADP",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 65,
+    "token": "сравнению",
+    "lemma": "сравнение",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Dat,Gender=Neut,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 66,
+    "token": "с",
+    "lemma": "с",
+    "pos": "ADP",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 67,
+    "token": "авиацией",
+    "lemma": "авиация",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Ins,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 5,
+    "token_id": 68,
+    "token": ".",
+    "lemma": ".",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 69,
+    "token": "Однако",
+    "lemma": "однако",
+    "pos": "ADV",
+    "grammems": "Degree=Pos"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 70,
+    "token": "медленная",
+    "lemma": "медленный",
+    "pos": "ADJ",
+    "grammems": "Case=Nom,Degree=Pos,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 71,
+    "token": "скорость",
+    "lemma": "скорость",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 72,
+    "token": ",",
+    "lemma": ",",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 73,
+    "token": "пиратство",
+    "lemma": "пиратство",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Neut,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 74,
+    "token": "и",
+    "lemma": "и",
+    "pos": "CCONJ",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 75,
+    "token": "загрязнение",
+    "lemma": "загрязнение",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Neut,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 76,
+    "token": "от",
+    "lemma": "от",
+    "pos": "ADP",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 77,
+    "token": "разливов",
+    "lemma": "разлив",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Gen,Gender=Masc,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 78,
+    "token": "нефти",
+    "lemma": "нефть",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Gen,Gender=Fem,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 79,
+    "token": "остаются",
+    "lemma": "оставаться",
+    "pos": "VERB",
+    "grammems": "Aspect=Imp,Mood=Ind,Number=Plur,Person=3,Tense=Pres,VerbForm=Fin,Voice=Mid"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 80,
+    "token": "вызовами",
+    "lemma": "вызов",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Ins,Gender=Masc,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 6,
+    "token_id": 81,
+    "token": ".",
+    "lemma": ".",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 82,
+    "token": "Новые",
+    "lemma": "новый",
+    "pos": "ADJ",
+    "grammems": "Case=Nom,Degree=Pos,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 83,
+    "token": "технологии",
+    "lemma": "технология",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Fem,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 84,
+    "token": ",",
+    "lemma": ",",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 85,
+    "token": "такие",
+    "lemma": "такой",
+    "pos": "DET",
+    "grammems": "Case=Nom,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 86,
+    "token": "как",
+    "lemma": "как",
+    "pos": "SCONJ",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 87,
+    "token": "автономные",
+    "lemma": "автономный",
+    "pos": "ADJ",
+    "grammems": "Case=Nom,Degree=Pos,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 88,
+    "token": "суда",
+    "lemma": "судно",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Nom,Gender=Neut,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 89,
+    "token": "и",
+    "lemma": "и",
+    "pos": "CCONJ",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 90,
+    "token": "экологичные",
+    "lemma": "экологичный",
+    "pos": "ADJ",
+    "grammems": "Animacy=Inan,Case=Acc,Degree=Pos,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 91,
+    "token": "двигатели",
+    "lemma": "двигатель",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Acc,Gender=Masc,Number=Plur"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 92,
+    "token": ",",
+    "lemma": ",",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 93,
+    "token": "обещают",
+    "lemma": "обещать",
+    "pos": "VERB",
+    "grammems": "Aspect=Imp,Mood=Ind,Number=Plur,Person=3,Tense=Pres,VerbForm=Fin,Voice=Act"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 94,
+    "token": "сделать",
+    "lemma": "сделать",
+    "pos": "VERB",
+    "grammems": "Aspect=Perf,VerbForm=Inf,Voice=Act"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 95,
+    "token": "морской",
+    "lemma": "морской",
+    "pos": "ADJ",
+    "grammems": "Animacy=Inan,Case=Acc,Degree=Pos,Gender=Masc,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 96,
+    "token": "транспорт",
+    "lemma": "транспорт",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Acc,Gender=Masc,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 97,
+    "token": "безопаснее",
+    "lemma": "безопаснее",
+    "pos": "ADJ",
+    "grammems": "Degree=Cmp"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 98,
+    "token": "и",
+    "lemma": "и",
+    "pos": "CCONJ",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 99,
+    "token": "чище",
+    "lemma": "чище",
+    "pos": "ADJ",
+    "grammems": "Degree=Cmp"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 100,
+    "token": ",",
+    "lemma": ",",
+    "pos": "PUNCT",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 101,
+    "token": "сохраняя",
+    "lemma": "сохранять",
+    "pos": "VERB",
+    "grammems": "Aspect=Imp,Tense=Pres,VerbForm=Conv,Voice=Act"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 102,
+    "token": "его",
+    "lemma": "его",
+    "pos": "DET",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 103,
+    "token": "значение",
+    "lemma": "значение",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Acc,Gender=Neut,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 104,
+    "token": "в",
+    "lemma": "в",
+    "pos": "ADP",
+    "grammems": ""
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 105,
+    "token": "будущем",
+    "lemma": "будущее",
+    "pos": "NOUN",
+    "grammems": "Animacy=Inan,Case=Loc,Gender=Neut,Number=Sing"
+  },
+  {
+    "doc_id": 4,
+    "sent_id": 7,
+    "token_id": 106,
+    "token": ".",
+    "lemma": ".",
+    "pos": "PUNCT",
+    "grammems": ""
+  }
+]
