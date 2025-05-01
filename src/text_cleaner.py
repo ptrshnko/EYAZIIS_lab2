@@ -26,7 +26,7 @@ emb = NewsEmbedding()
 morph_tagger = NewsMorphTagger(emb)
 
 def tokenize_and_store():
-    """Tokenize texts and store tokens in JSON files"""
+    """Tokenize texts and store tokens with morphological analysis in JSON files"""
     try:
         os.makedirs(TOKENS_DIR, exist_ok=True)
         
@@ -75,9 +75,9 @@ def tokenize_and_store():
                             'sent_id': sent_id,
                             'token_id': token_count + 1,
                             'token': token.text,
-                            'lemma': token.lemma,
-                            'pos': token.pos,
-                            'grammems': ','.join(f'{k}={v}' for k, v in token.feats.items())
+                            'lemma': token.lemma or 'Неизвестно',
+                            'pos': token.pos or 'Неизвестно',
+                            'grammems': ','.join(f'{k}={v}' for k, v in token.feats.items()) or 'Нет граммем'
                         })
                         token_count += 1
                     except Exception as e:

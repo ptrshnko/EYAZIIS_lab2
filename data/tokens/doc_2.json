@@ -24,7 +24,7 @@
     "token": "—",
     "lemma": "—",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -60,7 +60,7 @@
     "token": ",",
     "lemma": ",",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -87,7 +87,7 @@
     "token": ",",
     "lemma": ",",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -105,7 +105,7 @@
     "token": ",",
     "lemma": ",",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -123,7 +123,7 @@
     "token": "и",
     "lemma": "и",
     "pos": "CCONJ",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -150,7 +150,7 @@
     "token": ".",
     "lemma": ".",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -186,7 +186,7 @@
     "token": "на",
     "lemma": "на",
     "pos": "ADP",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -204,7 +204,7 @@
     "token": "и",
     "lemma": "и",
     "pos": "CCONJ",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -240,7 +240,7 @@
     "token": ".",
     "lemma": ".",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -267,7 +267,7 @@
     "token": "в",
     "lemma": "в",
     "pos": "ADP",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -276,7 +276,7 @@
     "token": "XIX",
     "lemma": "xix",
     "pos": "ADJ",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -294,7 +294,7 @@
     "token": "с",
     "lemma": "с",
     "pos": "ADP",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -321,7 +321,7 @@
     "token": ",",
     "lemma": ",",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -330,7 +330,7 @@
     "token": "а",
     "lemma": "а",
     "pos": "CCONJ",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -384,7 +384,7 @@
     "token": "и",
     "lemma": "и",
     "pos": "CCONJ",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -411,7 +411,7 @@
     "token": ".",
     "lemma": ".",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -447,7 +447,7 @@
     "token": ",",
     "lemma": ",",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -474,7 +474,7 @@
     "token": "и",
     "lemma": "и",
     "pos": "CCONJ",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -501,7 +501,7 @@
     "token": ".",
     "lemma": ".",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -528,7 +528,7 @@
     "token": ",",
     "lemma": ",",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -546,7 +546,7 @@
     "token": "и",
     "lemma": "и",
     "pos": "CCONJ",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -573,7 +573,7 @@
     "token": "в",
     "lemma": "в",
     "pos": "ADP",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -591,7 +591,7 @@
     "token": "—",
     "lemma": "—",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -618,7 +618,7 @@
     "token": ".",
     "lemma": ".",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -645,7 +645,7 @@
     "token": ",",
     "lemma": ",",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -663,7 +663,7 @@
     "token": "как",
     "lemma": "как",
     "pos": "SCONJ",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -681,7 +681,7 @@
     "token": "для",
     "lemma": "для",
     "pos": "ADP",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -699,7 +699,7 @@
     "token": "и",
     "lemma": "и",
     "pos": "CCONJ",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -726,7 +726,7 @@
     "token": ",",
     "lemma": ",",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -762,7 +762,7 @@
     "token": ",",
     "lemma": ",",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   },
   {
     "doc_id": 2,
@@ -825,6 +825,6 @@
     "token": ".",
     "lemma": ".",
     "pos": "PUNCT",
-    "grammems": ""
+    "grammems": "Нет граммем"
   }
 ]

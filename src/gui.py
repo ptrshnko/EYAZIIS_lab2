@@ -1,19 +1,18 @@
 import sys
 import os
 import shutil
+import json
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit,
-    QPushButton, QHBoxLayout, QComboBox, QDateEdit,
-    QTableWidget, QTableWidgetItem, QTextEdit, QFileDialog,
-    QCheckBox, QGridLayout, QMessageBox, QDialog, QFormLayout
+    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QLineEdit,
+    QPushButton, QComboBox, QTextEdit, QFileDialog, QMessageBox, QMenuBar,
+    QFormLayout, QDialog, QMenu, QAction, QDialogButtonBox, QTableWidget, QTableWidgetItem
 )
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import Qt
 from corpus_manager import CorpusManager
 from corpus_loader import import_corpus
 from text_cleaner import tokenize_and_store
 import logging
 
-# Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -31,15 +30,27 @@ class AddFileDialog(QDialog):
         file_layout.addWidget(self.file_path)
         file_layout.addWidget(self.file_btn)
         
+        self.title_input = QLineEdit()
+        self.title_input.setPlaceholderText("Например, 'Обзор фильма'")
         self.source_input = QLineEdit()
         self.source_input.setPlaceholderText("Например, 'Киножурнал'")
         self.author_input = QLineEdit()
         self.author_input.setPlaceholderText("Например, 'Иван Иванов'")
+        self.year_input = QLineEdit()
+        self.year_input.setPlaceholderText("Например, '2023'")
+        self.genre_input = QLineEdit()
+        self.genre_input.setPlaceholderText("Например, 'Обзор'")
+        self.language_input = QLineEdit()
+        self.language_input.setPlaceholderText("Например, 'Русский'")
         
         layout.addRow(self.file_label)
         layout.addRow(file_layout)
+        layout.addRow("Название:", self.title_input)
         layout.addRow("Источник:", self.source_input)
         layout.addRow("Автор:", self.author_input)
+        layout.addRow("Год:", self.year_input)
+        layout.addRow("Жанр:", self.genre_input)
+        layout.addRow("Язык:", self.language_input)
         
         self.buttons = QHBoxLayout()
         self.ok_btn = QPushButton("Добавить")
@@ -57,6 +68,57 @@ class AddFileDialog(QDialog):
         if file_path:
             self.file_path.setText(file_path)
 
+class EditFileDialog(QDialog):
+    def __init__(self, text, metadata, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Редактировать файл")
+        self.resize(600, 400)
+        layout = QVBoxLayout()
+        
+        self.text_edit = QTextEdit()
+        self.text_edit.setText(text)
+        layout.addWidget(self.text_edit)
+        
+        self.metadata_form = QFormLayout()
+        self.title_input = QLineEdit(metadata.get('title', ''))
+        self.source_input = QLineEdit(metadata.get('source', ''))
+        self.author_input = QLineEdit(metadata.get('author', ''))
+        self.year_input = QLineEdit(metadata.get('year', ''))
+        self.genre_input = QLineEdit(metadata.get('genre', ''))
+        self.language_input = QLineEdit(metadata.get('language', ''))
+        
+        self.metadata_form.addRow("Название:", self.title_input)
+        self.metadata_form.addRow("Источник:", self.source_input)
+        self.metadata_form.addRow("Автор:", self.author_input)
+        self.metadata_form.addRow("Год:", self.year_input)
+        self.metadata_form.addRow("Жанр:", self.genre_input)
+        self.metadata_form.addRow("Язык:", self.language_input)
+        layout.addLayout(self.metadata_form)
+        
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        layout.addWidget(self.buttons)
+        
+        self.setLayout(layout)
+
+class DeleteFileDialog(QDialog):
+    def __init__(self, filenames, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Удалить файл")
+        layout = QVBoxLayout()
+        
+        self.file_list = QComboBox()
+        self.file_list.addItems(filenames)
+        layout.addWidget(self.file_list)
+        
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        layout.addWidget(self.buttons)
+        
+        self.setLayout(layout)
+
 class CorpusGUI(QWidget):
     def __init__(self):
         super().__init__()
@@ -72,97 +134,78 @@ class CorpusGUI(QWidget):
     def init_ui(self):
         layout = QVBoxLayout()
 
+        # Menu bar
+        self.menu_bar = QMenuBar()
+        file_menu = QMenu("Файлы", self)
+        self.add_file_action = QAction("Добавить файл", self)
+        self.add_file_action.triggered.connect(self.add_file)
+        file_menu.addAction(self.add_file_action)
+        self.create_file_action = QAction("Создать новый", self)
+        self.create_file_action.triggered.connect(self.create_new_file)
+        file_menu.addAction(self.create_file_action)
+        self.edit_file_action = QAction("Редактировать файл", self)
+        self.edit_file_action.triggered.connect(self.edit_file)
+        file_menu.addAction(self.edit_file_action)
+        self.delete_file_action = QAction("Удалить файл", self)
+        self.delete_file_action.triggered.connect(self.delete_file)
+        file_menu.addAction(self.delete_file_action)
+        self.save_results_action = QAction("Сохранить результаты", self)
+        self.save_results_action.triggered.connect(self.save_results)
+        file_menu.addAction(self.save_results_action)
+        self.menu_bar.addMenu(file_menu)
+        
+        help_menu = QMenu("Справка", self)
+        about_action = QAction("О программе", self)
+        about_action.triggered.connect(self.show_about)
+        help_menu.addAction(about_action)
+        self.menu_bar.addMenu(help_menu)
+        
+        layout.setMenuBar(self.menu_bar)
+
         # Filter parameters
         filter_layout = QGridLayout()
-        filter_layout.addWidget(QLabel("Токен/лемма:"), 0, 0)
+        filter_layout.addWidget(QLabel("Запрос:"), 0, 0)
         self.query_input = QLineEdit()
         filter_layout.addWidget(self.query_input, 0, 1, 1, 3)
 
-        filter_layout.addWidget(QLabel("Поиск по:"), 1, 0)
-        self.by_combo = QComboBox()
-        self.by_combo.addItems(["token", "lemma", "pos"])
-        filter_layout.addWidget(self.by_combo, 1, 1)
+        filter_layout.addWidget(QLabel("Тип поиска:"), 1, 0)
+        self.search_type_combo = QComboBox()
+        self.search_type_combo.addItems(["Словоформа", "Часть речи"])
+        filter_layout.addWidget(self.search_type_combo, 1, 1)
 
-        filter_layout.addWidget(QLabel("POS-фильтр:"), 2, 0)
-        self.pos_filter = QLineEdit()
-        self.pos_filter.setPlaceholderText("например, NOUN, VERB...")
-        filter_layout.addWidget(self.pos_filter, 2, 1)
-
-        filter_layout.addWidget(QLabel("Источник:"), 3, 0)
+        filter_layout.addWidget(QLabel("Фильтр по источнику:"), 2, 0)
         self.source_filter = QLineEdit()
-        self.source_filter.setPlaceholderText("например, Киножурнал")
-        filter_layout.addWidget(self.source_filter, 3, 1)
+        self.source_filter.setPlaceholderText("Например, 'Киножурнал'")
+        filter_layout.addWidget(self.source_filter, 2, 1)
 
-        filter_layout.addWidget(QLabel("Автор:"), 4, 0)
+        filter_layout.addWidget(QLabel("Фильтр по автору:"), 3, 0)
         self.author_filter = QLineEdit()
-        self.author_filter.setPlaceholderText("например, Иван Иванов")
-        filter_layout.addWidget(self.author_filter, 4, 1)
-
-        filter_layout.addWidget(QLabel("Дата с:"), 2, 2)
-        self.date_from = QDateEdit(calendarPopup=True)
-        self.date_from.setDate(QDate.currentDate().addMonths(-1))
-        filter_layout.addWidget(self.date_from, 2, 3)
-
-        filter_layout.addWidget(QLabel("по:"), 3, 2)
-        self.date_to = QDateEdit(calendarPopup=True)
-        self.date_to.setDate(QDate.currentDate())
-        filter_layout.addWidget(self.date_to, 3, 3)
-
-        self.include_pos = QCheckBox("Применить POS-фильтр")
-        filter_layout.addWidget(self.include_pos, 1, 2)
-        self.include_date = QCheckBox("Применить фильтр по дате")
-        filter_layout.addWidget(self.include_date, 1, 3)
-        self.include_source = QCheckBox("Применить фильтр по источнику")
-        filter_layout.addWidget(self.include_source, 4, 2)
-        self.include_author = QCheckBox("Применить фильтр по автору")
-        filter_layout.addWidget(self.include_author, 4, 3)
+        self.author_filter.setPlaceholderText("Например, 'Иван Иванов'")
+        filter_layout.addWidget(self.author_filter, 3, 1)
 
         layout.addLayout(filter_layout)
 
         # Buttons
         btn_layout = QHBoxLayout()
-        self.add_file_btn = QPushButton("Добавить файл")
-        self.add_file_btn.clicked.connect(self.add_file)
         self.search_btn = QPushButton("Частотный анализ")
         self.search_btn.clicked.connect(self.run_frequency)
+        self.morph_btn = QPushButton("Морфологический анализ")
+        self.morph_btn.clicked.connect(self.run_morphological_analysis)
         self.concord_btn = QPushButton("Показать конкордансы")
         self.concord_btn.clicked.connect(self.run_concordance)
-        self.export_btn = QPushButton("Экспорт в CSV")
-        self.export_btn.clicked.connect(self.export_csv)
-        btn_layout.addWidget(self.add_file_btn)
+        self.save_btn = QPushButton("Сохранить результаты")
+        self.save_btn.clicked.connect(self.save_results)
         btn_layout.addWidget(self.search_btn)
+        btn_layout.addWidget(self.morph_btn)
         btn_layout.addWidget(self.concord_btn)
-        btn_layout.addWidget(self.export_btn)
+        btn_layout.addWidget(self.save_btn)
         layout.addLayout(btn_layout)
 
-        # Results
-        layout.addWidget(QLabel("Результаты частотного анализа:"))
-        self.results_area = QTableWidget()
-        self.results_area.setColumnCount(2)
-        self.results_area.setHorizontalHeaderLabels(["Элемент", "Частота"])
-        layout.addWidget(self.results_area)
-
-        layout.addWidget(QLabel("Конкордансы:"))
-        self.concord_area = QTextEdit()
-        self.concord_area.setReadOnly(True)
-        layout.addWidget(self.concord_area)
-
-        # Help
-        self.help_area = QTextEdit()
-        self.help_area.setReadOnly(True)
-        self.help_area.setHtml(
-            "<h3>Инструкция</h3>"
-            "<ul>"
-            "<li>Нажмите 'Добавить файл' для загрузки новых документов.</li>"
-            "<li>Введите токен или лемму в поле и выберите тип поиска.</li>"
-            "<li>При необходимости отметьте фильтрацию по POS, дате, источнику или автору.</li>"
-            "<li>Нажмите 'Частотный анализ' для отображения частот или 'Показать конкордансы' для контекстов.</li>"
-            "<li>Для экспорта результатов частот нажмите 'Экспорт в CSV'.</li>"
-            "<li>Убедитесь, что в папке data/raw есть текстовые файлы.</li>"
-            "</ul>"
-        )
-        layout.addWidget(QLabel("Справка:"))
-        layout.addWidget(self.help_area)
+        # Results area
+        self.results_table = QTableWidget()
+        self.results_table.setColumnCount(2)
+        self.results_table.setHorizontalHeaderLabels(["Элемент", "Значение"])
+        layout.addWidget(self.results_table)
 
         self.setLayout(layout)
 
@@ -170,119 +213,167 @@ class CorpusGUI(QWidget):
         dialog = AddFileDialog(self)
         if dialog.exec_():
             file_path = dialog.file_path.text()
-            source = dialog.source_input.text().strip()
-            author = dialog.author_input.text().strip()
-            
+            title = dialog.title_input.text()
+            source = dialog.source_input.text()
+            author = dialog.author_input.text()
+            year = dialog.year_input.text()
+            genre = dialog.genre_input.text()
+            language = dialog.language_input.text()
             if not file_path:
-                QMessageBox.warning(self, "Предупреждение", "Пожалуйста, выберите файл.")
+                QMessageBox.warning(self, "Предупреждение", "Выберите файл.")
                 return
-            
-            # Copy file to data/raw
             try:
                 fname = os.path.basename(file_path)
                 dest_path = os.path.join('data', 'raw', fname)
                 shutil.copy(file_path, dest_path)
-                logger.info(f"Copied file to {dest_path}")
-                
-                # Process only the new file
-                import_corpus(new_files=[(fname, source, author)])
+                import_corpus(new_files=[(fname, source, author, year, genre, language, title)])
                 tokenize_and_store()
-                
-                # Reload CorpusManager to reflect new data
                 self.manager = CorpusManager()
-                QMessageBox.information(self, "Успех", "Файл успешно добавлен и обработан.")
+                QMessageBox.information(self, "Успех", "Файл добавлен.")
             except Exception as e:
                 logger.error(f"Error adding file: {e}")
-                QMessageBox.critical(self, "Ошибка", f"Не удалось добавить файл: {str(e)}")
+                QMessageBox.critical(self, "Ошибка", str(e))
 
-    def get_filters(self):
-        f = {}
-        if self.include_pos.isChecked():
-            pos = self.pos_filter.text().strip().lower()
-            if pos:
-                f['pos'] = pos
-        if self.include_date.isChecked():
-            f['date_from'] = self.date_from.date().toString('yyyy-MM-dd')
-            f['date_to'] = self.date_to.date().toString('yyyy-MM-dd')
-        if self.include_source.isChecked():
-            source = self.source_filter.text().strip().lower()
-            if source:
-                f['source'] = source
-        if self.include_author.isChecked():
-            author = self.author_filter.text().strip().lower()
-            if author:
-                f['author'] = author
-        logger.debug(f"Filters applied: {f}")
-        return f or None
+    def create_new_file(self):
+        dialog = EditFileDialog("", {"title": "", "source": "", "author": "", "year": "", "genre": "", "language": ""}, self)
+        if dialog.exec_():
+            text = dialog.text_edit.toPlainText()
+            title = dialog.title_input.text()
+            source = dialog.source_input.text()
+            author = dialog.author_input.text()
+            year = dialog.year_input.text()
+            genre = dialog.genre_input.text()
+            language = dialog.language_input.text()
+            if not text or not title:
+                QMessageBox.warning(self, "Предупреждение", "Введите текст и название.")
+                return
+            fname, _ = QFileDialog.getSaveFileName(self, "Сохранить файл", "", "Text Files (*.txt)")
+            if fname:
+                with open(fname, 'w', encoding='utf-8') as f:
+                    f.write(text)
+                shutil.copy(fname, os.path.join('data', 'raw', os.path.basename(fname)))
+                import_corpus(new_files=[(os.path.basename(fname), source, author, year, genre, language, title)])
+                tokenize_and_store()
+                self.manager = CorpusManager()
+                QMessageBox.information(self, "Успех", "Файл создан.")
+
+    def edit_file(self):
+        fname, _ = QFileDialog.getOpenFileName(self, "Выберите файл для редактирования", "data/raw", "Text Files (*.txt)")
+        if fname:
+            with open(fname, 'r', encoding='utf-8') as f:
+                text = f.read()
+            metadata = next((meta for meta in self.manager.metadata.values() if meta['path_raw'] == fname), {})
+            dialog = EditFileDialog(text, metadata, self)
+            if dialog.exec_():
+                new_text = dialog.text_edit.toPlainText()
+                title = dialog.title_input.text()
+                source = dialog.source_input.text()
+                author = dialog.author_input.text()
+                year = dialog.year_input.text()
+                genre = dialog.genre_input.text()
+                language = dialog.language_input.text()
+                with open(fname, 'w', encoding='utf-8') as f:
+                    f.write(new_text)
+                import_corpus()
+                tokenize_and_store()
+                self.manager = CorpusManager()
+                if title or source or author or year or genre or language:
+                    self.update_metadata(os.path.basename(fname), title, source, author, year, genre, language)
+                QMessageBox.information(self, "Успех", "Файл обновлен.")
+
+    def delete_file(self):
+        filenames = [meta['filename'] for meta in self.manager.metadata.values()]
+        if not filenames:
+            QMessageBox.warning(self, "Предупреждение", "Нет файлов для удаления.")
+            return
+        dialog = DeleteFileDialog(filenames, self)
+        if dialog.exec_():
+            filename = dialog.file_list.currentText()
+            self.manager.remove_document(filename)
+            import_corpus()
+            tokenize_and_store()
+            self.manager = CorpusManager()
+            QMessageBox.information(self, "Успех", "Файл удален.")
+
+    def save_results(self):
+        if not self.results_table.rowCount():
+            QMessageBox.warning(self, "Предупреждение", "Нет результатов для сохранения.")
+            return
+        fname, _ = QFileDialog.getSaveFileName(self, "Сохранить результаты", "", "JSON Files (*.json)")
+        if fname:
+            results = {}
+            for row in range(self.results_table.rowCount()):
+                key = self.results_table.item(row, 0).text()
+                value = self.results_table.item(row, 1).text()
+                results[key] = value
+            with open(fname, 'w', encoding='utf-8') as f:
+                json.dump(results, f, ensure_ascii=False, indent=2)
+            QMessageBox.information(self, "Успех", "Результаты сохранены.")
+
+    def show_about(self):
+        QMessageBox.information(self, "О программе", "Корпусный менеджер для текстов о кинематографии.\nВерсия 1.0")
 
     def run_frequency(self):
-        logger.info("Frequency analysis button clicked")
-        self.results_area.clearContents()
-        self.results_area.setRowCount(0)
-
         query = self.query_input.text().strip()
-        by = self.by_combo.currentText()
-        filters = self.get_filters()
-
-        if not query:
-            QMessageBox.warning(self, "Предупреждение", "Введите токен или лемму для поиска.")
-            return
-
+        search_type = self.search_type_combo.currentText()
+        filters = {}
+        if self.source_filter.text():
+            filters['source'] = self.source_filter.text()
+        if self.author_filter.text():
+            filters['author'] = self.author_filter.text()
         try:
-            result = self.manager.get_frequency(query=query, by=by, filters=filters)
-            if not result:
-                QMessageBox.warning(self, "Нет результатов", f"Не найдено совпадений для '{query}' (тип: {by}).")
-                return
-            self.results_area.setRowCount(len(result))
-            for row, (elem, freq) in enumerate(result.items()):
-                self.results_area.setItem(row, 0, QTableWidgetItem(elem))
-                self.results_area.setItem(row, 1, QTableWidgetItem(str(freq)))
-            logger.info(f"Displayed {len(result)} frequency results")
+            if search_type == "Словоформа":
+                results = self.manager.get_wordform_frequency(query, filters)
+                self.display_results({k: str(v) for k, v in results.items()})
+            elif search_type == "Часть речи":
+                pos_results = self.manager.get_pos_analysis(query)
+                self.display_results({word: pos for word, pos in pos_results})
         except Exception as e:
-            logger.error(f"Error in frequency analysis: {e}")
-            QMessageBox.critical(self, "Ошибка", f"Ошибка при выполнении частотного анализа: {str(e)}")
+            QMessageBox.warning(self, "Ошибка", str(e))
+
+    def run_morphological_analysis(self):
+        query = self.query_input.text().strip()
+        try:
+            results = self.manager.get_morphological_analysis(query)
+            self.display_results({f"{r['token']}": f"Лемма: {r['lemma']}, POS: {r['pos']}, Граммемы: {r['grammems']}" for r in results})
+        except Exception as e:
+            QMessageBox.warning(self, "Ошибка", str(e))
 
     def run_concordance(self):
-        logger.info("Concordance button clicked")
-        self.concord_area.clear()
         query = self.query_input.text().strip()
-        filters = self.get_filters()
-
-        if not query:
-            QMessageBox.warning(self, "Предупреждение", "Введите токен или лемму для поиска.")
-            return
-
+        filters = {}
+        if self.source_filter.text():
+            filters['source'] = self.source_filter.text()
+        if self.author_filter.text():
+            filters['author'] = self.author_filter.text()
         try:
-            concordances = self.manager.get_concordance(query=query, window=5, filters=filters)
-            if not concordances:
-                QMessageBox.warning(self, "Нет результатов", f"Не найдено конкордансов для '{query}'.")
-                return
-            for left, match, right, doc_id, sent_id in concordances:
-                line = f"... {' '.join(left)} >> {match} << {' '.join(right)} ... (doc {doc_id}, sent {sent_id})"
-                self.concord_area.append(line)
-            logger.info(f"Displayed {len(concordances)} concordances")
+            concordances = self.manager.get_concordance(query, window=5, filters=filters)
+            self.display_results({f"Конкорданс {i+1}": f"... {' '.join(left)} >> {match} << {' '.join(right)} ... (doc {doc_id}, sent {sent_id})" for i, (left, match, right, doc_id, sent_id) in enumerate(concordances)})
         except Exception as e:
-            logger.error(f"Error in concordance analysis: {e}")
-            QMessageBox.critical(self, "Ошибка", f"Ошибка при получении конкордансов: {str(e)}")
+            QMessageBox.warning(self, "Ошибка", str(e))
 
-    def export_csv(self):
-        logger.info("Export CSV button clicked")
-        path, _ = QFileDialog.getSaveFileName(self, "Сохранить CSV", "", "CSV Files (*.csv)")
-        if not path:
-            return
-        rows = []
-        for row in range(self.results_area.rowCount()):
-            elem = self.results_area.item(row, 0).text()
-            freq = self.results_area.item(row, 1).text()
-            rows.append(f"{elem},{freq}\n")
-        try:
-            with open(path, 'w', encoding='utf-8') as f:
-                f.writelines(rows)
-            logger.info(f"Exported results to {path}")
-            QMessageBox.information(self, "Успех", "Результаты успешно экспортированы в CSV.")
-        except Exception as e:
-            logger.error(f"Error exporting CSV: {e}")
-            QMessageBox.critical(self, "Ошибка", f"Ошибка при экспорте CSV: {str(e)}")
+    def display_results(self, results):
+        self.results_table.setRowCount(0)
+        for key, value in results.items():
+            row = self.results_table.rowCount()
+            self.results_table.insertRow(row)
+            self.results_table.setItem(row, 0, QTableWidgetItem(key))
+            self.results_table.setItem(row, 1, QTableWidgetItem(value))
+
+    def update_metadata(self, filename, title, source, author, year, genre, language):
+        for doc_id, meta in self.manager.metadata.items():
+            if meta['filename'] == filename:
+                meta.update({
+                    'title': title or meta.get('title', ''),
+                    'source': source or meta.get('source', ''),
+                    'author': author or meta.get('author', ''),
+                    'year': year or meta.get('year', ''),
+                    'genre': genre or meta.get('genre', ''),
+                    'language': language or meta.get('language', '')
+                })
+                with open(os.path.join('data', 'metadata', 'metadata.json'), 'w', encoding='utf-8') as f:
+                    json.dump(self.manager.metadata, f, ensure_ascii=False, indent=2)
+                break
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

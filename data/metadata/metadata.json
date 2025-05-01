@@ -1,13 +1,4 @@
 {
-  "1": {
-    "filename": "auto_article1.txt",
-    "path_raw": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\raw\\auto_article1.txt",
-    "path_txt": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\cleaned\\auto_article1.txt",
-    "title": "Автомобильный транспорт занимает центральное место в современной жизни, обеспечивая мобильность людей и грузов на короткие и средние расстояния. Он является ключевым элементом экономики и повседневной",
-    "date": "",
-    "source": "Unknown",
-    "author": "Unknown"
-  },
   "2": {
     "filename": "bus_routes.txt",
     "path_raw": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\raw\\bus_routes.txt",
