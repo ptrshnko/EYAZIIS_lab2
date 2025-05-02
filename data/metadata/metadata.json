@@ -34,5 +34,16 @@
     "date": "",
     "source": "АвиацияАвиация",
     "author": "Антон Антон"
+  },
+  "6": {
+    "filename": "екфтызщке_дгиднг.txt",
+    "path_raw": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\raw\\екфтызщке_дгиднг.txt",
+    "path_txt": "c:\\Users\\ivanm\\Рабочий стол\\EYAZIIS_lab2\\data\\cleaned\\екфтызщке_дгиднг.txt",
+    "title": "transport_lublyu",
+    "source": "transport_lublyu",
+    "author": "Антон Антон",
+    "year": "2025",
+    "genre": "жопа",
+    "language": "жопаа"
   }
 }

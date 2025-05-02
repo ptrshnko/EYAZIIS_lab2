@@ -95,8 +95,7 @@ class CorpusManager:
             morph = {
                 'token': token.text,
                 'lemma': token.lemma or 'Неизвестно',
-                'pos': token.pos or 'Неизвестно',
-                'grammems': ','.join(f'{k}={v}' for k, v in token.feats.items()) or 'Нет граммем'
+                'pos': token.pos or 'Неизвестно'
             }
             results.append(morph)
         return results

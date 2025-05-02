@@ -225,8 +225,9 @@ class CorpusGUI(QWidget):
             try:
                 fname = os.path.basename(file_path)
                 dest_path = os.path.join('data', 'raw', fname)
-                shutil.copy(file_path, dest_path)
-                import_corpus(new_files=[(fname, source, author, year, genre, language, title)])
+                if not os.path.exists(dest_path):
+                    shutil.copy(file_path, dest_path)
+                import_corpus(new_files=[(fname, source or 'Unknown', author or 'Unknown', year or None, genre or 'Unknown', language or 'Unknown', title or fname)])
                 tokenize_and_store()
                 self.manager = CorpusManager()
                 QMessageBox.information(self, "Успех", "Файл добавлен.")
@@ -249,13 +250,19 @@ class CorpusGUI(QWidget):
                 return
             fname, _ = QFileDialog.getSaveFileName(self, "Сохранить файл", "", "Text Files (*.txt)")
             if fname:
-                with open(fname, 'w', encoding='utf-8') as f:
-                    f.write(text)
-                shutil.copy(fname, os.path.join('data', 'raw', os.path.basename(fname)))
-                import_corpus(new_files=[(os.path.basename(fname), source, author, year, genre, language, title)])
-                tokenize_and_store()
-                self.manager = CorpusManager()
-                QMessageBox.information(self, "Успех", "Файл создан.")
+                try:
+                    with open(fname, 'w', encoding='utf-8') as f:
+                        f.write(text)
+                    dest_path = os.path.join('data', 'raw', os.path.basename(fname))
+                    if not os.path.exists(dest_path):
+                        shutil.copy(fname, dest_path)
+                    import_corpus(new_files=[(os.path.basename(fname), source or 'User', author or 'User', year or '2025', genre or 'User-defined', language or 'Russian', title)])
+                    tokenize_and_store()
+                    self.manager = CorpusManager()
+                    QMessageBox.information(self, "Успех", "Файл создан.")
+                except Exception as e:
+                    logger.error(f"Error creating file: {e}")
+                    QMessageBox.critical(self, "Ошибка", str(e))
 
     def edit_file(self):
         fname, _ = QFileDialog.getOpenFileName(self, "Выберите файл для редактирования", "data/raw", "Text Files (*.txt)")
@@ -272,14 +279,17 @@ class CorpusGUI(QWidget):
                 year = dialog.year_input.text()
                 genre = dialog.genre_input.text()
                 language = dialog.language_input.text()
-                with open(fname, 'w', encoding='utf-8') as f:
-                    f.write(new_text)
-                import_corpus()
-                tokenize_and_store()
-                self.manager = CorpusManager()
-                if title or source or author or year or genre or language:
+                try:
+                    with open(fname, 'w', encoding='utf-8') as f:
+                        f.write(new_text)
+                    import_corpus()
+                    tokenize_and_store()
+                    self.manager = CorpusManager()
                     self.update_metadata(os.path.basename(fname), title, source, author, year, genre, language)
-                QMessageBox.information(self, "Успех", "Файл обновлен.")
+                    QMessageBox.information(self, "Успех", "Файл обновлен.")
+                except Exception as e:
+                    logger.error(f"Error editing file: {e}")
+                    QMessageBox.critical(self, "Ошибка", str(e))
 
     def delete_file(self):
         filenames = [meta['filename'] for meta in self.manager.metadata.values()]
@@ -289,11 +299,15 @@ class CorpusGUI(QWidget):
         dialog = DeleteFileDialog(filenames, self)
         if dialog.exec_():
             filename = dialog.file_list.currentText()
-            self.manager.remove_document(filename)
-            import_corpus()
-            tokenize_and_store()
-            self.manager = CorpusManager()
-            QMessageBox.information(self, "Успех", "Файл удален.")
+            try:
+                self.manager.remove_document(filename)
+                import_corpus()
+                tokenize_and_store()
+                self.manager = CorpusManager()
+                QMessageBox.information(self, "Успех", "Файл удален.")
+            except Exception as e:
+                logger.error(f"Error deleting file: {e}")
+                QMessageBox.critical(self, "Ошибка", str(e))
 
     def save_results(self):
         if not self.results_table.rowCount():
@@ -301,14 +315,18 @@ class CorpusGUI(QWidget):
             return
         fname, _ = QFileDialog.getSaveFileName(self, "Сохранить результаты", "", "JSON Files (*.json)")
         if fname:
-            results = {}
-            for row in range(self.results_table.rowCount()):
-                key = self.results_table.item(row, 0).text()
-                value = self.results_table.item(row, 1).text()
-                results[key] = value
-            with open(fname, 'w', encoding='utf-8') as f:
-                json.dump(results, f, ensure_ascii=False, indent=2)
-            QMessageBox.information(self, "Успех", "Результаты сохранены.")
+            try:
+                results = {}
+                for row in range(self.results_table.rowCount()):
+                    key = self.results_table.item(row, 0).text()
+                    value = self.results_table.item(row, 1).text()
+                    results[key] = value
+                with open(fname, 'w', encoding='utf-8') as f:
+                    json.dump(results, f, ensure_ascii=False, indent=2)
+                QMessageBox.information(self, "Успех", "Результаты сохранены.")
+            except Exception as e:
+                logger.error(f"Error saving results: {e}")
+                QMessageBox.critical(self, "Ошибка", str(e))
 
     def show_about(self):
         QMessageBox.information(self, "О программе", "Корпусный менеджер для текстов о кинематографии.\nВерсия 1.0")
@@ -335,7 +353,7 @@ class CorpusGUI(QWidget):
         query = self.query_input.text().strip()
         try:
             results = self.manager.get_morphological_analysis(query)
-            self.display_results({f"{r['token']}": f"Лемма: {r['lemma']}, POS: {r['pos']}, Граммемы: {r['grammems']}" for r in results})
+            self.display_results({r['token']: f"Лемма: {r['lemma']}, POS: {r['pos']}" for r in results})
         except Exception as e:
             QMessageBox.warning(self, "Ошибка", str(e))
 
@@ -373,6 +391,7 @@ class CorpusGUI(QWidget):
                 })
                 with open(os.path.join('data', 'metadata', 'metadata.json'), 'w', encoding='utf-8') as f:
                     json.dump(self.manager.metadata, f, ensure_ascii=False, indent=2)
+                logger.info(f"Updated metadata for {filename}")
                 break
 
 if __name__ == '__main__':
